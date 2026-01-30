@@ -10,6 +10,7 @@ public class Main {
                 "https://expro.ru/bitrix/catalog_export/export_Sai.xml"
         );
 
+        //TODO (production): externalize DB URL, username, and password instead of hardcoding
         DatabaseService db = new DatabaseService(
                 "jdbc:postgresql://localhost:54322/test",
                 "postgres",
@@ -21,6 +22,6 @@ public class Main {
             xml.update(table, db);
         }
 
-        System.out.println("Готово");
+        System.out.println("Completed");
     }
 }
