@@ -15,6 +15,7 @@ public final class JsonHelper {
      * @return JSON string in the format {@code {"key":"value"}}
      */
     public static String toJson(Map<String, String> map) {
+        //TODO remake with StringBuilder
         return map.entrySet().stream()
                 .map(e -> "\"" + escape(e.getKey()) + "\":\"" + escape(e.getValue()) + "\"")
                 .collect(Collectors.joining(",", "{", "}"));
