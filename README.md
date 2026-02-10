@@ -16,8 +16,10 @@ Technologies used:
 * Groovy `XmlSlurper` for XML parsing
 * PostgreSQL via JDBC
 * `offers.vendorCode` is considered unique for UPSERT operations
+* Dynamic table and column creation based on XML structure
+* Validation with @NotBlank for required configuration fields
 
-A minimal interface is provided via `main()`.
+A minimal interface is provided via `Application.main()`.
 
 ## Features
 
@@ -43,6 +45,33 @@ boolean isColumnId(String tableName, String columnName); // Check if column is u
 String getDDLChange(String tableName); // Schema changes (adding new columns)
 ```
 
+## Database
+* `DatabaseService` handles connection lifecycle and queries
+* Automatically adds missing columns
+* UPSERT using `vendorcode` if present
+* `params` column is stored as JSONB when XML contains `<param>` elements
+
+## Configuration
+All configuration is done via `application.yml`:
+
+```yaml
+micronaut:
+  application:
+    name: xml-db-sync
+
+datasource:
+  default:
+    url: ${DB_URL:`jdbc:postgresql://localhost:54322/test`}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:123}
+    driver-class-name: org.postgresql.Driver
+
+app:
+  catalog-url: https://expro.ru/bitrix/catalog_export/export_Sai.xml
+```
+
+Environment variables `DB_URL`, `DB_USER`, and `DB_PASS` can override defaults.
+
 ## Run PostgreSQL in Docker
 
 ```bash
@@ -58,6 +87,6 @@ docker run -d --name test-db \
 
 1. Clone repository
 2. Start PostgreSQL (see above)
-3. Configure DB credentials (in `Main.java`)
-4. Run `Main.main()` to sync data
+3. Configure DB credentials via environment variables or `application.yml`
+4. Run `Application.main()` to sync data
 
