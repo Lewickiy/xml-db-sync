@@ -1,5 +1,9 @@
 package ru.levitsky.service;
 
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Singleton;
+import ru.levitsky.config.DataSourceConfig;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,10 +14,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Singleton
-/**
- * PostgreSQL database service.
- * Provides methods to execute SQL statements and retrieve table metadata.
- */
 public class DatabaseService {
 
     final Connection connection;

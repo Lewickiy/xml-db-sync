@@ -16,9 +16,6 @@ import java.util.Map;
 import static ru.levitsky.helper.JsonHelper.toJson;
 
 @Singleton
-/**
- * Parser for XML catalog files
- */
 public class XmlParser {
 
     private final GPathResult xml;

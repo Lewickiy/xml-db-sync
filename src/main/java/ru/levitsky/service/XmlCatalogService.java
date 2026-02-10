@@ -9,9 +9,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
-/**
- * Service for synchronizing XML data with a PostgreSQL database
- */
 public class XmlCatalogService {
 
     private final TableBuilder tableBuilder;
