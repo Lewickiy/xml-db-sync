@@ -1,0 +1,13 @@
+micronaut:
+  application:
+    name: xml-db-sync
+
+datasource:
+  default:
+    url: ${DB_URL:`jdbc:postgresql://localhost:54322/test`}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:123}
+    driver-class-name: org.postgresql.Driver
+
+app:
+  catalog-url: https://expro.ru/bitrix/catalog_export/export_Sai.xml

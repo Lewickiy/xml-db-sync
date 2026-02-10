@@ -1,30 +1,21 @@
 package ru.levitsky.service;
 
+import jakarta.inject.Singleton;
+
 import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * Service for synchronizing XML data with a PostgreSQL database
- */
+@Singleton
 public class XmlCatalogService {
-
-    //TODO add logging
-    //TODO Refactor upsert logic to avoid direct access to DatabaseService.connection
 
     private final TableBuilder tableBuilder;
     private final XmlParser parser;
 
-    /**
-     * Constructs a catalog service from an XML URL.
-     *
-     * @param url the URL of the XML file to parse
-     * @throws Exception if XML parsing fails
-     */
-    public XmlCatalogService(String url) throws Exception {
-        this.parser = new XmlParser(url);
+    public XmlCatalogService(XmlParser xmlParser) throws Exception {
+        this.parser = xmlParser;
         this.tableBuilder = new TableBuilder(parser);
     }
 
@@ -80,7 +71,6 @@ public class XmlCatalogService {
      * @throws Exception if database operations fail
      */
     private void upsert(String tableName, DatabaseService db) throws Exception {
-        //TODO refactoring needed
         List<Map<String, String>> rows = parser.getRows(tableName);
         Set<String> dbCols = db.getColumns(tableName);
         boolean hasVendorCode = dbCols.contains("vendorcode");

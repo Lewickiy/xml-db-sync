@@ -3,6 +3,8 @@ package ru.levitsky.service;
 import groovy.xml.XmlSlurper;
 import groovy.xml.slurpersupport.GPathResult;
 import groovy.xml.slurpersupport.NodeChild;
+import jakarta.inject.Singleton;
+import ru.levitsky.config.AppConfig;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -13,20 +15,12 @@ import java.util.Map;
 
 import static ru.levitsky.helper.JsonHelper.toJson;
 
-/**
- * Parser for XML catalog files
- */
+@Singleton
 public class XmlParser {
 
     private final GPathResult xml;
 
-    /**
-     * Initializes the XML parser and parses the document from the given URL.
-     *
-     * @param url XML document URL
-     * @throws Exception if parsing fails
-     */
-    public XmlParser(String url) throws Exception {
+    public XmlParser(AppConfig config) throws Exception {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(false);
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false);
@@ -36,7 +30,7 @@ public class XmlParser {
 
         SAXParser parser = factory.newSAXParser();
         XmlSlurper slurper = new XmlSlurper(parser);
-        this.xml = slurper.parse(url);
+        this.xml = slurper.parse(config.getCatalogUrl());
     }
 
     /**

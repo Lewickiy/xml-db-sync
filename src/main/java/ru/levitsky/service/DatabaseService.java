@@ -1,5 +1,9 @@
 package ru.levitsky.service;
 
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Singleton;
+import ru.levitsky.config.DataSourceConfig;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,27 +13,17 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * PostgreSQL database service.
- * Provides methods to execute SQL statements and retrieve table metadata.
- */
+@Singleton
 public class DatabaseService {
-
-    //TODO AutoCloseable
-    //TODO add logger
 
     final Connection connection;
 
-    /**
-     * Initializes a new database connection.
-     *
-     * @param url      JDBC URL of the database
-     * @param user     database username
-     * @param password database password
-     * @throws Exception if connection cannot be established
-     */
-    public DatabaseService(String url, String user, String password) throws Exception {
-        this.connection = DriverManager.getConnection(url, user, password);
+    public DatabaseService(DataSourceConfig config) throws Exception {
+        this.connection = DriverManager.getConnection(
+                config.getUrl(),
+                config.getUsername(),
+                config.getPassword()
+        );
     }
 
     /**
@@ -68,5 +62,16 @@ public class DatabaseService {
             }
         }
         return cols;
+    }
+
+    @PreDestroy
+    public void close() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
