@@ -14,7 +14,6 @@ public class Application {
             for (String table : xmlService.getTableNames()) {
                 xmlService.update(table, dbService);
             }
-            System.out.println("Готово");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

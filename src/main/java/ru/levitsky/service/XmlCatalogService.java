@@ -1,7 +1,6 @@
 package ru.levitsky.service;
 
 import jakarta.inject.Singleton;
-import ru.levitsky.config.AppConfig;
 
 import java.sql.PreparedStatement;
 import java.util.List;
@@ -15,8 +14,8 @@ public class XmlCatalogService {
     private final TableBuilder tableBuilder;
     private final XmlParser parser;
 
-    public XmlCatalogService(AppConfig config) throws Exception {
-        this.parser = new XmlParser(config.getCatalogUrl());
+    public XmlCatalogService(XmlParser xmlParser) throws Exception {
+        this.parser = xmlParser;
         this.tableBuilder = new TableBuilder(parser);
     }
 

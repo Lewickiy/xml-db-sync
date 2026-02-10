@@ -1,5 +1,6 @@
 package ru.levitsky.service;
 
+import jakarta.annotation.PreDestroy;
 import jakarta.inject.Singleton;
 import ru.levitsky.config.DataSourceConfig;
 
@@ -18,7 +19,11 @@ public class DatabaseService {
     final Connection connection;
 
     public DatabaseService(DataSourceConfig config) throws Exception {
-        this.connection = DriverManager.getConnection(config.getUrl(), config.getUsername(), config.getPassword());
+        this.connection = DriverManager.getConnection(
+                config.getUrl(),
+                config.getUsername(),
+                config.getPassword()
+        );
     }
 
     public void execute(String sql) throws SQLException {
@@ -44,5 +49,16 @@ public class DatabaseService {
             }
         }
         return cols;
+    }
+
+    @PreDestroy
+    public void close() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
