@@ -1,5 +1,8 @@
 package ru.levitsky.service;
 
+import jakarta.inject.Singleton;
+import ru.levitsky.config.DataSourceConfig;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,12 +12,13 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 
+@Singleton
 public class DatabaseService {
 
     final Connection connection;
 
-    public DatabaseService(String url, String user, String password) throws Exception {
-        this.connection = DriverManager.getConnection(url, user, password);
+    public DatabaseService(DataSourceConfig config) throws Exception {
+        this.connection = DriverManager.getConnection(config.getUrl(), config.getUsername(), config.getPassword());
     }
 
     public void execute(String sql) throws SQLException {

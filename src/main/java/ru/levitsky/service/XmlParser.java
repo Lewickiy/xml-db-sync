@@ -3,6 +3,7 @@ package ru.levitsky.service;
 import groovy.xml.XmlSlurper;
 import groovy.xml.slurpersupport.GPathResult;
 import groovy.xml.slurpersupport.NodeChild;
+import jakarta.inject.Singleton;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 import static ru.levitsky.helper.JsonHelper.toJson;
 
+@Singleton
 public class XmlParser {
 
     private final GPathResult xml;
