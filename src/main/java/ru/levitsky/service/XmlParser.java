@@ -16,6 +16,9 @@ import java.util.Map;
 import static ru.levitsky.helper.JsonHelper.toJson;
 
 @Singleton
+/**
+ * Parser for XML catalog files
+ */
 public class XmlParser {
 
     private final GPathResult xml;
@@ -33,10 +36,23 @@ public class XmlParser {
         this.xml = slurper.parse(config.getCatalogUrl());
     }
 
+    /**
+     * Returns the root {@code <shop>} element from the XML document.
+     *
+     * @return {@link GPathResult} representing the shop node
+     */
     public GPathResult shop() {
         return (GPathResult) xml.getProperty("shop");
     }
 
+    /**
+     * Returns a list of table names extracted from the XML.
+     * <p>
+     * Each child node of {@code <shop>} with nested elements is considered a table.
+     * Table names are converted to lowercase.
+     *
+     * @return list of table names
+     */
     public List<String> getTableNames() {
         List<String> tables = new ArrayList<>();
         for (Object node : shop().children()) {
@@ -48,6 +64,15 @@ public class XmlParser {
         return tables;
     }
 
+    /**
+     * Returns the rows for a given table as a list of key-value maps.
+     * <p>
+     * Attributes and child elements of each XML row node are converted to columns.
+     * {@code <param>} elements are serialized into a JSON string stored in the {@code params} column.
+     *
+     * @param tableName name of the table (XML node)
+     * @return list of rows represented as {@code Map<String, String>}
+     */
     public List<Map<String, String>> getRows(String tableName) {
         GPathResult table = (GPathResult) shop().getProperty(tableName);
         List<Map<String, String>> rows = new ArrayList<>();
@@ -81,6 +106,12 @@ public class XmlParser {
         return rows;
     }
 
+    /**
+     * Checks if the given table contains any {@code <param>} elements.
+     *
+     * @param tableName name of the table (XML node)
+     * @return {@code true} if at least one row contains a {@code <param>} element, {@code false} otherwise
+     */
     public boolean hasParams(String tableName) {
         GPathResult table = (GPathResult) shop().getProperty(tableName);
         for (Object obj : table.children()) {

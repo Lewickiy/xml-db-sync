@@ -9,6 +9,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
+/**
+ * Service for synchronizing XML data with a PostgreSQL database
+ */
 public class XmlCatalogService {
 
     private final TableBuilder tableBuilder;
@@ -19,14 +22,35 @@ public class XmlCatalogService {
         this.tableBuilder = new TableBuilder(parser);
     }
 
+    /**
+     * Returns the list of top-level XML entities (tables) present in the catalog.
+     *
+     * @return list of table names inferred from XML
+     */
     public List<String> getTableNames() {
         return parser.getTableNames();
     }
 
+    /**
+     * Generates a {@code CREATE TABLE} DDL statement for a given table
+     *
+     * @param tableName the table name corresponding to an XML node
+     * @return SQL DDL statement for creating the table
+     */
     public String getTableDDL(String tableName) {
         return tableBuilder.getTableDDL(tableName);
     }
 
+    /**
+     * Synchronizes a database table with the XML data:<br>
+     * - Creates the table if it does not exist<br>
+     * - Adds missing columns dynamically<br>
+     * - Upserts XML rows into the table<br>
+     *
+     * @param tableName the table to synchronize
+     * @param db the {@link DatabaseService} to execute SQL statements
+     * @throws Exception if any SQL or parsing error occurs
+     */
     public void update(String tableName, DatabaseService db) throws Exception {
         db.execute(getTableDDL(tableName));
 
@@ -39,6 +63,16 @@ public class XmlCatalogService {
         upsert(tableName, db);
     }
 
+    /**
+     * Performs UPSERT operations for a given table:<br>
+     * - If {@code vendorcode} exists, performs ON CONFLICT DO UPDATE<br>
+     * - Otherwise, performs standard INSERT<br>
+     * - Columns of type JSONB (params) are handled via {@link PreparedStatement#setObject}
+     *
+     * @param tableName the table name
+     * @param db the {@link DatabaseService} used to execute SQL statements
+     * @throws Exception if database operations fail
+     */
     private void upsert(String tableName, DatabaseService db) throws Exception {
         List<Map<String, String>> rows = parser.getRows(tableName);
         Set<String> dbCols = db.getColumns(tableName);

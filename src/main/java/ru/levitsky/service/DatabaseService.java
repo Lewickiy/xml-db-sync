@@ -1,9 +1,5 @@
 package ru.levitsky.service;
 
-import jakarta.annotation.PreDestroy;
-import jakarta.inject.Singleton;
-import ru.levitsky.config.DataSourceConfig;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,6 +10,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Singleton
+/**
+ * PostgreSQL database service.
+ * Provides methods to execute SQL statements and retrieve table metadata.
+ */
 public class DatabaseService {
 
     final Connection connection;
@@ -26,12 +26,25 @@ public class DatabaseService {
         );
     }
 
+    /**
+     * Executes an arbitrary SQL statement (DDL or DML).
+     *
+     * @param sql SQL statement
+     * @throws SQLException if an error occurs while executing the statement
+     */
     public void execute(String sql) throws SQLException {
         try (Statement st = connection.createStatement()) {
             st.execute(sql);
         }
     }
 
+    /**
+     * Retrieves the set of column names for a given table.
+     *
+     * @param table table name
+     * @return set of column names
+     * @throws SQLException if an error occurs while querying the database
+     */
     public Set<String> getColumns(String table) throws SQLException {
         Set<String> cols = new HashSet<>();
 
